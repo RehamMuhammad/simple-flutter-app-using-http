@@ -1,50 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:json_api_example/controllers/app_controller.dart';
+import 'package:json_api_example/models/post.dart';
 
-import 'package:json_api_example/models/comment.dart';
-
-class RecipeDetail extends StatefulWidget {
-  final int? id;
-  const RecipeDetail(this.id, {Key? key}) : super(key: key);
-
+class CreatePost extends StatefulWidget {
   @override
-  _RecipeDetailState createState() => _RecipeDetailState();
+  _CreatePostState createState() => _CreatePostState();
 }
 
-class _RecipeDetailState extends State<RecipeDetail> {
-
-    List<Comment> comments = [];
+class _CreatePostState extends State<CreatePost> {
+  final title = TextEditingController();
+  final body = TextEditingController();
   @override
   void initState() {
-    Future.delayed(Duration.zero, () async {
-      var commentsData = await AppContrloller.getComments(widget.id??0);
-      print(commentsData);
-      setState(() {
-        comments = commentsData;
-      });
-    });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.id.toString()),
-      ),
-         body: comments.isEmpty
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : ListView.builder(
-                itemCount: comments.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(comments[index].name.toString()),
-                    subtitle: Text(comments[index].body.toString()),
+        appBar: AppBar(
+          title: Text("Create New Post"),
+        ),
+        body: SafeArea(
+            child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: title,
+                decoration: InputDecoration(
+                    border: new OutlineInputBorder(
+                        borderSide: new BorderSide(color: Colors.teal)),
+                    labelText: 'Enter Post Title',
+                    hintText: 'Enter Post Title'),
+              ),
+              TextField(
+                controller: body,
+                decoration: InputDecoration(
+                    border: new OutlineInputBorder(
+                        borderSide: new BorderSide(color: Colors.teal)),
+                    labelText: 'Enter Post body',
+                    hintText: 'Enter Post body'),
+              ),
+              SizedBox(
+                  child: TextButton(
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0))),
+                ),
+                child: Text(
+                  'Add Post',
+                  style: TextStyle(fontSize: 20.0),
+                ),
+                onPressed: () async {
+                  var newPost = Post(
+                    userId: 5,
+                    id: 4,
+                    title: title.text,
+                    body: body.text,
                   );
-                }));
+                  await AppContrloller.sendPosts(body: newPost.toJson());
+                },
+              )),
+            ],
+          ),
+        )));
   }
 }
-

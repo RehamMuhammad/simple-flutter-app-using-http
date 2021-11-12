@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:json_api_example/controllers/app_controller.dart';
 import 'package:json_api_example/screens/comments_viewer.dart';
+import 'package:json_api_example/screens/create_post.dart';
 
 import 'models/post.dart';
 
@@ -50,7 +51,12 @@ class _MyHomePageState extends State<MyHomePage> {
         appBar: AppBar(
           title: const Text('Api Tester'),
           actions: [
-            IconButton(onPressed: () {}, icon: Icon(Icons.send)),
+            IconButton(
+                onPressed: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (_) => CreatePost()));
+                },
+                icon: Icon(Icons.send)),
           ],
         ),
         body: postDataList.isEmpty
@@ -62,13 +68,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 itemBuilder: (context, index) {
                   return ListTile(
                     onTap: () {
-
-                       Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) =>
-                                RecipeDetail(postDataList[index].id)));
-                     // print('mmmmmmmmmmmmmmmmmmmmmmmmmmmmmm ${index}');
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) =>
+                                  CommentsViewer(postDataList[index].id)));
                     },
                     title: Text(postDataList[index].title.toString()),
                     subtitle: Text(postDataList[index].body.toString()),
